@@ -41,16 +41,25 @@
             position: absolute;
             width: 20px;
             height: 20px;
-            opacity: 0.5;
+            opacity: 0;
             background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>') center no-repeat;
             background-size: contain;
-            animation: float 25s linear infinite;
+            animation: float 10s linear infinite;
+            bottom: -50px;
         }
         @keyframes float {
-            0% { transform: translateY(10vh) translateX(0) rotate(0deg); opacity: 0; }
-            5% { opacity: 0.6; }
-            95% { opacity: 0.6; }
-            100% { transform: translateY(-120vh) translateX(10vw) rotate(720deg); opacity: 0; }
+            0% { 
+                transform: translateY(0) translateX(0) rotate(0deg); 
+                opacity: 0;
+                left: 0%;
+            }
+            10% { opacity: 0.6; }
+            90% { opacity: 0.6; }
+            100% { 
+                transform: translateY(calc(-100vh - 100px)) translateX(calc(100vw - 50px)) rotate(720deg); 
+                opacity: 0; 
+                left: 100%;
+            }
         }
     </style>
 </head>
@@ -58,8 +67,10 @@
     <div id="hearts-container"></div>
     <!-- 모달 -->
     <div id="user-info-modal" class="fixed inset-0  flex items-center justify-center z-50 transition-opacity duration-300">
+        
         <div class="bg-white rounded-3xl shadow-2xl p-8 w-full max-w-md transform transition-all duration-300 scale-95 opacity-0" id="modal-content">
             <h2 class="text-2xl font-bold mb-2 text-gray-800 text-center">AIRO</h2>
+            <p class="text-sm text-gray-600 text-center mb-4">당신의 연애세포를 진단하는 길로</p>
             <form id="user-info-form" class="space-y-6">
                 <div>
                     <label for="username" class="block text-sm font-medium text-gray-600 mb-2">이름</label>
@@ -106,8 +117,8 @@
         <!-- 대화창 / 선택지 -->
         <div class="relative z-20 w-full flex flex-col items-center">
                 
-            <div id="dialogue-container" class="w-full max-w-3xl mx-auto bg-white/80 backdrop-blur-md rounded-xl p-4 md:p-6 mb-3 shadow-lg shadow-pink-100 border border-2 border-pink-300">
-                <p id="speaker-name" class="text-2xl font-bold text-pink-600 text-left">캐릭터</p>
+            <div id="dialogue-container" class="w-full max-w-3xl mx-auto bg-white/80 backdrop-blur-md rounded-xl p-4 md:p-4 mb-2 shadow-lg shadow-pink-200 border border-2 border-pink-300">
+                <p id="speaker-name" class="text-xl font-bold text-pink-600 text-left">캐릭터</p>
 
                 <div id="dialogue-box" class="text-gray-800 min-h-[70px] flex items-center justify-center">
                     <p id="dialogue-text" class="text-center w-full text-lg md:text-xl">대화 내용</p>
@@ -115,13 +126,13 @@
             </div>
 
             <div id="choice-container" class="w-full max-w-3xl mx-auto flex flex-col items-center gap-3">
-                <button class="w-full bg-white/90 backdrop-blur-md text-gray-800 font-semibold py-4 px-6 rounded-xl hover:bg-white focus:outline-none focus:ring-2 focus:ring-pink-400 transition-all duration-300 shadow-md shadow-pink-100">
+                <button class="w-full bg-white/90 backdrop-blur-md text-gray-800 font-semibold py-4 px-6 rounded-xl hover:bg-white focus:outline-none focus:ring-2 focus:ring-pink-400 transition-all duration-300 shadow-md shadow-pink-200">
                     선택지1
                 </button>
-                <button class="w-full bg-white/90 backdrop-blur-md text-gray-800 font-semibold py-4 px-6 rounded-xl hover:bg-white focus:outline-none focus:ring-2 focus:ring-pink-400 transition-all duration-300 shadow-md shadow-pink-100">
+                <button class="w-full bg-white/90 backdrop-blur-md text-gray-800 font-semibold py-4 px-6 rounded-xl hover:bg-white focus:outline-none focus:ring-2 focus:ring-pink-400 transition-all duration-300 shadow-md shadow-pink-200">
                     선택지2
                 </button>
-                <button class="w-full bg-white/90 backdrop-blur-md text-gray-800 font-semibold py-4 px-6 rounded-xl hover:bg-white focus:outline-none focus:ring-2 focus:ring-pink-400 transition-all duration-300 shadow-md shadow-pink-100">
+                <button class="w-full bg-white/90 backdrop-blur-md text-gray-800 font-semibold py-4 px-6 rounded-xl hover:bg-white focus:outline-none focus:ring-2 focus:ring-pink-400 transition-all duration-300 shadow-md shadow-pink-200">
                     선택지3
                 </button>
             </div>
