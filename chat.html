@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AIRO</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'M PLUS Rounded 1c', sans-serif;
+            background: linear-gradient(135deg, #ffdde1, #ee9ca7);
+            overflow: hidden;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+        
+        /* 드래그 방지 */
+        img {
+            -webkit-user-drag: none;
+            -khtml-user-drag: none;
+            -moz-user-drag: none;
+            -o-user-drag: none;
+            user-drag: none;
+        }
+        
+        /* 선택 방지 */
+        * {
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            -khtml-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+    </style>
+</head>
+<body>
+    <!-- 채팅 -->
+    <main id="chat-container" class="h-screen w-screen relative overflow-hidden p-4 md:p-8 flex flex-col justify-end">
+        <!-- 배경 하트 -->
+        <div class="absolute inset-0 flex items-center justify-center z-0">
+            <svg class="w-2/3 h-2/3 text-pink-200 opacity-40" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M10 18.25l-1.45-1.32C4.52 12.91 2 10.5 2 7.5 2 4.95 4.02 3 6.5 3c1.48 0 2.9.73 3.5 1.87C10.6 3.73 12.02 3 13.5 3 15.98 3 18 4.95 18 7.5c0 3-2.52 5.41-6.55 9.43L10 18.25z" clip-rule="evenodd" />
+            </svg>
+        </div>
+
+        <!-- 캐릭터 -->
+        <div class="absolute inset-0 flex items-center justify-center z-10 pointer-events-none">
+            <img src="./char.png" alt="Character" class="object-contain w-2/3 md:w-1/2 h-auto max-h-[80vh]">
+        </div>
+
+        <!-- 대화창 / 선택지 -->
+        <div class="relative z-20 w-full flex flex-col items-center">
+                
+            <div id="dialogue-container" class="w-full max-w-3xl mx-auto bg-white/80 backdrop-blur-md rounded-xl p-4 md:p-4 mb-2 shadow-lg shadow-pink-200 border border-2 border-pink-300">
+                <p id="speaker-name" class="text-xl font-bold text-pink-600 text-left">캐릭터</p>
+
+                <div id="dialogue-box" class="text-gray-800 min-h-[70px] flex items-center justify-center">
+                    <p id="dialogue-text" class="text-center w-full text-lg md:text-xl">대화 내용</p>
+                </div>
+            </div>
+
+            <div id="choice-container" class="w-full max-w-3xl mx-auto flex flex-cul items-center gap-3">
+                <input type="text" class="w-full bg-white/90 backdrop-blur-md text-gray-800 font-normal py-4 px-6 rounded-xl hover:bg-white focus:outline-none focus:ring-2 focus:ring-pink-400 transition-all duration-300 shadow-md shadow-pink-200">
+                <button id="sendBtn" class="w-[80px] bg-pink-500 text-white font-normal py-4 px-6 rounded-xl hover:bg-pink-600 focus:outline-none focus:ring-2 focus:ring-pink-400 transition-all duration-300 shadow-md shadow-pink-200">
+                >
+                </button>      
+            </div>
+            
+        </div>
+    </main>
+    <script>
+        function getUrlParameter(name) {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get(name);
+        }
+
+        const userName = decodeURIComponent(getUrlParameter('name') || '');
+        const userGender = decodeURIComponent(getUrlParameter('gender') || '');
+
+        document.addEventListener('DOMContentLoaded', () => {
+            if (userName !== '' && userGender !== '') {
+                const dialogueText = document.getElementById('dialogue-text');
+                if (dialogueText) {
+                    dialogueText.textContent = `${userName} / ${userGender}`;
+                }
+                document.getElementById("sendBtn").addEventListener('click',send);
+            } else {
+                window.location.href = 'index.html';
+            }
+        });
+
+        function send() {
+            window.location.href = 'results.html';
+        }
+
+
+    </script>
+</body>
+</html>
+

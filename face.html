@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AIRO</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'M PLUS Rounded 1c', sans-serif;
+            background: linear-gradient(135deg, #ffdde1, #ee9ca7);
+            overflow: hidden;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+        
+        /* 드래그 방지 */
+        img {
+            -webkit-user-drag: none;
+            -khtml-user-drag: none;
+            -moz-user-drag: none;
+            -o-user-drag: none;
+            user-drag: none;
+        }
+        
+        /* 선택 방지 */
+        * {
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            -khtml-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+        video{
+            transform: rotateY(180deg);
+            -webkit-transform:rotateY(180deg); /* Safari and Chrome */
+            -moz-transform:rotateY(180deg); /* Firefox */
+        }
+        
+    </style>
+</head>
+<body>
+    <!-- 어ㅓㄹ굴 -->
+    <main id="face-container" class="fixed inset-0  flex items-center justify-center z-50 transition-opacity duration-300">
+        <div class="bg-white rounded-3xl shadow-2xl p-8 w-full max-w-md transform transition-all duration-300 scale-95" id="modal-content">
+            <h2 class="text-2xl font-bold mb-2 text-gray-800 text-center">AIRO</h2>
+            
+            <div style="text-align: center;">
+                <label id="Text" class="block text-sm font-medium text-gray-600 mb-2"></label>
+                <p><video id="cameraview" class="rounded-xl" width="720" height="480"></video></p>
+                <button id="shotBtn" class="w-full bg-pink-500 text-white font-normal py-3 px-4 rounded-xl hover:bg-pink-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500 transition-transform duration-200 hover:scale-105 mt-8 ">
+                사진 촬영
+                </button>
+            </div>
+        </div>
+    </main>
+    
+    <script>
+
+        function getUrlParameter(name) {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get(name);
+        }
+
+        const userName = decodeURIComponent(getUrlParameter('name') || '');
+        const userGender = decodeURIComponent(getUrlParameter('gender') || '');
+
+        document.addEventListener('DOMContentLoaded', () => {
+            if (userName !== '' && userGender !== '') {
+                open();
+                const Text = document.getElementById('Text');
+                if (Text) {
+                    Text.textContent = `${userName}님 사진을 촬영해주세요.`;
+                }
+            }else{
+                window.location.href = 'index.html';
+            }
+        });
+
+        // camera
+        var streamVideo
+
+        if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){
+            alert("Media Device not supported")
+        } else {
+            document.getElementById("shotBtn").addEventListener('click',shot)
+        }
+
+        function open() {
+            close()
+            navigator.mediaDevices.getUserMedia({video:true}).then(stream => {
+                streamVideo = stream
+
+                var cameraView = document.getElementById("cameraview");
+                cameraView.srcObject = stream;
+                cameraView.play()
+            })
+        }
+
+        function close() {
+            if (streamVideo) {
+                var track = streamVideo.getTracks()
+                track[0].stop()
+                streamVideo = null
+            }
+        }
+
+        function shot() {
+            var cameraView = document.getElementById("cameraview");
+            var canvas = document.createElement("canvas");
+
+            canvas.width = cameraView.videoWidth;
+            canvas.height = cameraView.videoHeight;
+
+            var context = canvas.getContext("2d");
+            context.drawImage(cameraView, 0, 0, canvas.width, canvas.height);
+
+            var dataURL = canvas.toDataURL("image/png");
+            var link = document.createElement("a");
+
+            link.href = dataURL;
+            link.download = "image.png";
+
+            link.click();
+
+            close();
+
+            window.location.href = `chat.html?name=${userName}&gender=${userGender}`;
+        }
+
+    </script>
+</body>
+</html>
