@@ -51,14 +51,14 @@
 
         <!-- 캐릭터 -->
         <div class="absolute inset-0 flex items-center justify-center z-10 pointer-events-none">
-            <img src="./char.png" alt="Character" class="object-contain w-2/3 md:w-1/2 h-auto max-h-[80vh]">
+            <img src="./char.png" alt="Character" id="Character" class="object-contain w-2/3 md:w-1/2 h-auto max-h-[80vh]">
         </div>
 
         <!-- 대화창 / 선택지 -->
-        <div class="relative z-20 w-full flex flex-col items-center">
+        <div class="relative z-20 w-full flex flex-col items-center" id="dialogue-container">
                 
-            <div id="dialogue-container" class="w-full max-w-3xl mx-auto bg-white/80 backdrop-blur-md rounded-xl p-4 md:p-4 mb-2 shadow-lg shadow-pink-200 border border-2 border-pink-300">
-                <p id="speaker-name" class="text-xl font-bold text-pink-600 text-left">캐릭터</p>
+            <div id="dialogue-container" class="w-full max-w-3xl mx-2 my-2 bg-white/70 backdrop-blur-md rounded-xl p-4 md:p-4 mb-2 shadow-lg shadow-pink-200 border border-2 border-pink-300">
+                <p id="speaker-name" class="text-xl font-bold text-pink-600 text-left">[name]</p>
 
                 <div id="dialogue-box" class="text-gray-800 min-h-[70px] flex items-center justify-center">
                     <p id="dialogue-text" class="text-center w-full text-lg md:text-xl">대화 내용</p>
@@ -66,12 +66,24 @@
             </div>
 
             <div id="choice-container" class="w-full max-w-3xl mx-auto flex flex-cul items-center gap-3">
-                <input type="text" class="w-full bg-white/90 backdrop-blur-md text-gray-800 font-normal py-4 px-6 rounded-xl hover:bg-white focus:outline-none focus:ring-2 focus:ring-pink-400 transition-all duration-300 shadow-md shadow-pink-200">
-                <button id="sendBtn" class="w-[80px] bg-pink-500 text-white font-normal py-4 px-6 rounded-xl hover:bg-pink-600 focus:outline-none focus:ring-2 focus:ring-pink-400 transition-all duration-300 shadow-md shadow-pink-200">
-                >
+                <input type="text" id="input" class="w-full bg-white/90 backdrop-blur-md text-gray-800 font-normal py-4 px-6 rounded-xl hover:bg-white focus:outline-none focus:ring-2 focus:ring-pink-400 transition-all duration-300 shadow-md shadow-pink-200">
+                <button id="sendBtn" class=" bg-pink-500 text-white font-normal py-4 px-6 rounded-xl hover:bg-pink-600 focus:outline-none focus:ring-2 focus:ring-pink-400 transition-all duration-300 shadow-md shadow-pink-200">>
                 </button>      
             </div>
             
+        </div>
+
+        <div id="result-container" class="fixed inset-0 flex items-center justify-center z-50 transition-opacity duration-300 hidden">
+            <div class="bg-white/70 rounded-3xl shadow-2xl p-8 w-full max-w-md transform transition-all duration-300 scale-95 backdrop-blur-md" id="modal-content">
+                <h2 class="text-2xl font-bold mb-2 text-gray-800 text-center">AIRO</h2>
+
+                <p id="result" class="text-center w-full text-lg md:text-xl">보낸 내용</p>
+                <p id="inputtextlist" class="text-center w-full text-lg md:text-xl">보낸 내용</p>
+                <p id="dasf" class="text-center w-full text-lg md:text-xl">받은 내용</p>
+                <p id="replytextlist" class="text-center w-full text-lg md:text-xl">받은 내용</p>
+            </div>
+    
+            <!-- 굳이 결과 화면을 따로 만들지 않고 채팅 화면에서 채팅 컨테이너를 숨기고 결과컨테이너를 띄우는게 나을듯 ㄴ-->
         </div>
     </main>
     <script>
@@ -83,20 +95,42 @@
         const userName = decodeURIComponent(getUrlParameter('name') || '');
         const userGender = decodeURIComponent(getUrlParameter('gender') || '');
 
+        const dialogueText = document.getElementById('dialogue-text');
+        const input = document.getElementById('input');
+        const resultContainer = document.getElementById('result-container');
+        const result = document.getElementById('result');
+
         document.addEventListener('DOMContentLoaded', () => {
             if (userName !== '' && userGender !== '') {
-                const dialogueText = document.getElementById('dialogue-text');
-                if (dialogueText) {
-                    dialogueText.textContent = `${userName} / ${userGender}`;
-                }
+                dialogueText.textContent = `${userName}`;
                 document.getElementById("sendBtn").addEventListener('click',send);
             } else {
                 window.location.href = 'index.html';
             }
         });
+        let counting = 1;
+        const inputText = []
 
+        const replayText = []
         function send() {
-            window.location.href = 'results.html';
+            counting++;
+
+            inputText.push(input.value);
+            replayText.push(Math.random());
+
+            dialogueText.textContent = Math.random();
+            console.log(inputText);
+        
+            if(counting == 7){
+                resultContainer.classList.remove('hidden');
+                document.getElementById("dialogue-container").classList.add('hidden');
+
+                document.getElementById("Character").classList.add('hidden');
+                document.getElementById("inputtextlist").textContent = inputText.join('\n');
+                document.getElementById("replytextlist").textContent = replayText.join('\n');
+            }
+        
+            input.value = '';
         }
 
 
