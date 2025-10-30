@@ -123,15 +123,12 @@
             const message = input.value.trim();
             if (!message) return;
 
-            // 입력 필드 비우기
             input.value = '';
             
-            // 사용자 메시지 저장 및 표시
             inputText.push(message);
             dialogueText.textContent = '대답을 생각 중입니다...';
             
             try {
-                // 서버에 메시지 전송
                 const response = await fetch('/api/chat', {
                     method: 'POST',
                     headers: {
@@ -139,7 +136,8 @@
                     },
                     body: JSON.stringify({
                         message: message,
-                        user_name: userName
+                        user_name: userName,
+                        counting: counting
                     })
                 });
                 
@@ -149,20 +147,18 @@
                 
                 const data = await response.json();
                 
-                // 서버 응답 저장 및 표시
                 replayText.push(data.response);
                 dialogueText.textContent = data.response;
                 
-                // 대화 횟수 증가
                 counting++;
                 
-                // 7번째 대화 후 결과 화면 표시
-                if(counting >= 7) {
+                if(counting == 6) {
                     resultContainer.classList.remove('hidden');
                     document.getElementById("dialogue-container").classList.add('hidden');
                     document.getElementById("Character").classList.add('hidden');
-                    document.getElementById("inputtextlist").textContent = inputText.join('\n');
-                    document.getElementById("replytextlist").textContent = replayText.join('\n');
+                    //document.getElementById("inputtextlist").textContent = inputText.join('\n');
+                    //document.getElementById("replytextlist").textContent = replayText.join('\n');
+                    document.getElementById("result").textContent = data.response;
                 }
                 
             } catch (error) {
