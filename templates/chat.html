@@ -99,37 +99,76 @@
         const input = document.getElementById('input');
         const resultContainer = document.getElementById('result-container');
         const result = document.getElementById('result');
+        const inputText = [];
+        const replayText = [];
+        let counting = 0;
 
         document.addEventListener('DOMContentLoaded', () => {
             if (userName !== '' && userGender !== '') {
-                dialogueText.textContent = `${userName}`;
-                document.getElementById("sendBtn").addEventListener('click',send);
+                dialogueText.textContent = `${userName}님, 반갑습니다! 무엇이든 물어보세요.`;
+                document.getElementById("sendBtn").addEventListener('click', sendMessage);
+                
+                // 엔터 키로도 전송 가능하도록 이벤트 리스너 추가
+                input.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        sendMessage();
+                    }
+                });
             } else {
-                window.location.href = 'index.html';
+                window.location.href = '/';
             }
         });
-        let counting = 1;
-        const inputText = []
 
-        const replayText = []
-        function send() {
-            counting++;
-            inputText.push(input.value);
-            replayText.push(Math.random());
+        async function sendMessage() {
+            const message = input.value.trim();
+            if (!message) return;
 
-            dialogueText.textContent = Math.random();
-            console.log(inputText);
-        
-            if(counting == 7){
-                resultContainer.classList.remove('hidden');
-                document.getElementById("dialogue-container").classList.add('hidden');
-
-                document.getElementById("Character").classList.add('hidden');
-                document.getElementById("inputtextlist").textContent = inputText.join('\n');
-                document.getElementById("replytextlist").textContent = replayText.join('\n');
-            }
-        
+            // 입력 필드 비우기
             input.value = '';
+            
+            // 사용자 메시지 저장 및 표시
+            inputText.push(message);
+            dialogueText.textContent = '대답을 생각 중입니다...';
+            
+            try {
+                // 서버에 메시지 전송
+                const response = await fetch('/api/chat', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        message: message,
+                        user_name: userName
+                    })
+                });
+                
+                if (!response.ok) {
+                    throw new Error('서버 응답 오류');
+                }
+                
+                const data = await response.json();
+                
+                // 서버 응답 저장 및 표시
+                replayText.push(data.response);
+                dialogueText.textContent = data.response;
+                
+                // 대화 횟수 증가
+                counting++;
+                
+                // 7번째 대화 후 결과 화면 표시
+                if(counting >= 7) {
+                    resultContainer.classList.remove('hidden');
+                    document.getElementById("dialogue-container").classList.add('hidden');
+                    document.getElementById("Character").classList.add('hidden');
+                    document.getElementById("inputtextlist").textContent = inputText.join('\n');
+                    document.getElementById("replytextlist").textContent = replayText.join('\n');
+                }
+                
+            } catch (error) {
+                console.error('Error:', error);
+                dialogueText.textContent = '오류가 발생했습니다. 다시 시도해주세요.';
+            }
         }
 
 
