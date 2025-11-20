@@ -145,8 +145,8 @@
                 const result = await response.json();
                 
                 if (result.status === 'success') {
-                    // 성공 시 채팅 페이지로 이동
-                    window.location.href = `/chat?name=${encodeURIComponent(userName)}&gender=${encodeURIComponent(userGender)}`;
+                    const finalUserName = result.final_name;
+                    window.location.href = `/chat?name=${encodeURIComponent(finalUserName)}&gender=${encodeURIComponent(userGender)}`;
                 } else {
                     alert('사진 업로드에 실패했습니다: ' + (result.message || '알 수 없는 오류'));
                     shotBtn.disabled = false;
