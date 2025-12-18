@@ -8,6 +8,7 @@ from sqlalchemy import create_engine, Column, Integer, String, ForeignKey, Text
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, Session, relationship
 import os,uvicorn,random,string,base64
+from server.evaluator import score_sentences
 
 DATABASE_URL = "sqlite:///./airo.db" 
 engine = create_engine(DATABASE_URL, connect_args={"check_same_thread": False})
@@ -155,6 +156,68 @@ def get_dashboard_data(db: Session = Depends(get_db)):
             "chats": [{"user_message": c.user_message, "bot_response": c.bot_response} for c in chats]
         })
     return dashboard_data
+
+
+# --- 대화 추출 ---
+def get_latest_chat(db: Session = Depends(get_db)):
+    user = (
+        db.query(User)
+        .order_by(User.id.desc())
+        .first()
+    )
+
+    if not user:
+        raise HTTPException(status_code=404, detail="No user found")
+    
+    user_m = []
+    bot_m = []
+    for c in user.chats:
+        user_m.append(c.user_message)
+        bot_m.append(c.bot_response)
+    return {
+        "id": user.id,
+        "name": user.name,
+        "user_chat": user_m,
+        "bot_response": bot_m
+    }
+
+# --- AI 점수 모델 연결 ---
+def get_latest_score(db: Session):
+    user = get_latest_chat(db)
+    if not user:
+        return None
+
+    sentences = (
+        user["bot_response"][-3:]
+        + user["user_chat"][-3:]
+    )
+
+    scores = score_sentences(sentences)
+    print("AI scores:", scores)
+    return scores
+
+# --- 대시보드에 연결 ---
+@app.get("/api/user/{user_id}/score")
+def get_user_score(user_id: int, db: Session = Depends(get_db)):
+    user = db.query(User).filter(User.id == user_id).first()
+    if not user or not user.chats:
+        raise HTTPException(status_code=404, detail="No chat data")
+
+    user_msgs = [c.user_message for c in user.chats][-3:]
+    bot_msgs = [c.bot_response for c in user.chats][-3:]
+
+    sentences = bot_msgs + user_msgs
+
+    scores = score_sentences(sentences)
+
+    return {
+        "friend_user": round(float(scores["friend_user"]), 2),
+        "attract_user": round(float(scores["attract_user"]), 2),
+        "fun_user": round(float(scores["fun_user"]), 2),
+        "blri_user": round(float(scores["blri_user"]), 2),
+    }
+
+
 
 
 if __name__ == "__main__":

@@ -1,0 +1,17 @@
+# Web
+fastapi>=0.110,<1.0
+uvicorn[standard]>=0.27,<1.0
+jinja2>=3.1,<4.0
+python-multipart>=0.0.9
+
+# DB
+sqlalchemy>=1.4,<2.1
+
+# Validation
+pydantic>=2.0,<3.0
+
+# ML
+tensorflow>=2.19,<2.20
+keras>=3.3,<4.0
+pandas>=1.5,<2.2
+numpy>=1.26,<2.1
