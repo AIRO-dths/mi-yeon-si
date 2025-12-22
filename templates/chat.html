@@ -1,169 +1,220 @@
 <!DOCTYPE html>
 <html lang="ko">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>AIRO</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
     <style>
-        body {
-            font-family: 'M PLUS Rounded 1c', sans-serif;
-            background: linear-gradient(135deg, #faffdd, #eaee9c);
-            overflow: hidden;
-            -webkit-user-select: none;
-            -moz-user-select: none;
-            -ms-user-select: none;
-            user-select: none;
-        }
-        
-        /* 드래그 방지 */
-        img {
-            -webkit-user-drag: none;
-            -khtml-user-drag: none;
-            -moz-user-drag: none;
-            -o-user-drag: none;
-            user-drag: none;
-        }
-        
-        /* 선택 방지 */
-        * {
-            -webkit-touch-callout: none;
-            -webkit-user-select: none;
-            -khtml-user-select: none;
-            -moz-user-select: none;
-            -ms-user-select: none;
-            user-select: none;
-        }
+      body {
+        font-family: "M PLUS Rounded 1c", sans-serif;
+        background: linear-gradient(135deg, #faffdd, #eaee9c);
+        overflow: hidden;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+      }
+
+      /* 드래그 방지 */
+      img {
+        -webkit-user-drag: none;
+        -khtml-user-drag: none;
+        -moz-user-drag: none;
+        -o-user-drag: none;
+        user-drag: none;
+      }
+
+      /* 선택 방지 */
+      * {
+        -webkit-touch-callout: none;
+        -webkit-user-select: none;
+        -khtml-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <!-- 채팅 -->
-    <main id="chat-container" class="h-screen w-screen relative overflow-hidden p-4 md:p-8 flex flex-col justify-end">
-        <!-- 배경 하트 -->
-        
-        <!-- 캐릭터 -->
-        <div class="absolute inset-0 flex items-center justify-center z-10 pointer-events-none">
-            <img src="/static/char.png" alt="Character" id="Character" class="object-contain w-2/3 md:w-1/2 h-auto max-h-[80vh]">
+    <main
+      id="chat-container"
+      class="h-screen w-screen relative overflow-hidden p-4 md:p-8 flex flex-col justify-end"
+    >
+      <!-- 배경 하트 -->
+
+      <!-- 캐릭터 -->
+      <div
+        class="absolute inset-0 flex items-center justify-center z-10 pointer-events-none"
+      >
+        <img
+          src="/static/char.png"
+          alt="Character"
+          id="Character"
+          class="object-contain w-2/3 md:w-1/2 h-auto max-h-[80vh]"
+        />
+      </div>
+
+      <!-- 대화창 / 선택지 -->
+      <div
+        class="relative z-20 w-full flex flex-col items-center"
+        id="dialogue-container"
+      >
+        <div
+          id="dialogue-container"
+          class="w-full max-w-3xl mx-2 my-2 bg-white/70 backdrop-blur-md rounded-xl p-4 md:p-4 mb-2 shadow-lg shadow-yellow-200 border border-2 border-yellow-300"
+        >
+          <p
+            id="speaker-name"
+            class="text-xl font-bold text-yellow-400 text-left"
+          >
+            [name]
+          </p>
+
+          <div
+            id="dialogue-box"
+            class="text-gray-800 min-h-[70px] flex items-center justify-center"
+          >
+            <p id="dialogue-text" class="text-center w-full text-lg md:text-xl">
+              대화 내용
+            </p>
+          </div>
         </div>
 
-        <!-- 대화창 / 선택지 -->
-        <div class="relative z-20 w-full flex flex-col items-center" id="dialogue-container">
-                
-            <div id="dialogue-container" class="w-full max-w-3xl mx-2 my-2 bg-white/70 backdrop-blur-md rounded-xl p-4 md:p-4 mb-2 shadow-lg shadow-yellow-200 border border-2 border-yellow-300">
-                <p id="speaker-name" class="text-xl font-bold text-yellow-400 text-left">[name]</p>
+        <div
+          id="choice-container"
+          class="w-full max-w-3xl mx-auto flex flex-cul items-center gap-3"
+        >
+          <input
+            type="text"
+            id="input"
+            class="w-full bg-white/90 backdrop-blur-md text-gray-800 font-normal py-4 px-6 rounded-xl hover:bg-white focus:outline-none focus:ring-2 focus:ring-yellow-400 transition-all duration-300 shadow-md shadow-yellow-200"
+          />
+          <button
+            id="sendBtn"
+            class="bg-yellow-400 text-white font-normal py-4 px-6 rounded-xl hover:bg-yellow-400 focus:outline-none focus:ring-2 focus:ring-yellow-400 transition-all duration-300 shadow-md shadow-yellow-200"
+          >
+            >
+          </button>
+        </div>
+      </div>
 
-                <div id="dialogue-box" class="text-gray-800 min-h-[70px] flex items-center justify-center">
-                    <p id="dialogue-text" class="text-center w-full text-lg md:text-xl">대화 내용</p>
-                </div>
-            </div>
+      <div
+        id="result-container"
+        class="fixed inset-0 flex items-center justify-center z-50 transition-opacity duration-300 hidden"
+      >
+        <div
+          class="bg-white/70 rounded-3xl shadow-2xl p-8 w-full max-w-md transform transition-all duration-300 scale-95 backdrop-blur-md"
+          id="modal-content"
+        >
+          <h2 class="text-2xl font-bold mb-2 text-gray-800 text-center">
+            AIRO
+          </h2>
 
-            <div id="choice-container" class="w-full max-w-3xl mx-auto flex flex-cul items-center gap-3">
-                <input type="text" id="input" class="w-full bg-white/90 backdrop-blur-md text-gray-800 font-normal py-4 px-6 rounded-xl hover:bg-white focus:outline-none focus:ring-2 focus:ring-yellow-400 transition-all duration-300 shadow-md shadow-yellow-200">
-                <button id="sendBtn" class=" bg-yellow-400 text-white font-normal py-4 px-6 rounded-xl hover:bg-yellow-400 focus:outline-none focus:ring-2 focus:ring-yellow-400 transition-all duration-300 shadow-md shadow-yellow-200">>
-                </button>      
-            </div>
-            
+          <p id="result" class="text-center w-full text-lg md:text-xl"></p>
+          <!--<p id="inputtextlist" class="text-center w-full text-lg md:text-xl">보낸 내용</p>-->
+          <!--<p id="dasf" class="text-center w-full text-lg md:text-xl">받은 내용</p>-->
+          <!--<p id="replytextlist" class="text-center w-full text-lg md:text-xl">받은 내용</p>-->
         </div>
 
-        <div id="result-container" class="fixed inset-0 flex items-center justify-center z-50 transition-opacity duration-300 hidden">
-            <div class="bg-white/70 rounded-3xl shadow-2xl p-8 w-full max-w-md transform transition-all duration-300 scale-95 backdrop-blur-md" id="modal-content">
-                <h2 class="text-2xl font-bold mb-2 text-gray-800 text-center">AIRO</h2>
-
-                <p id="result" class="text-center w-full text-lg md:text-xl"></p>
-                <!--<p id="inputtextlist" class="text-center w-full text-lg md:text-xl">보낸 내용</p>-->
-                <!--<p id="dasf" class="text-center w-full text-lg md:text-xl">받은 내용</p>-->
-                <!--<p id="replytextlist" class="text-center w-full text-lg md:text-xl">받은 내용</p>-->
-            </div>
-    
-            <!-- 굳이 결과 화면을 따로 만들지 않고 채팅 화면에서 채팅 컨테이너를 숨기고 결과컨테이너를 띄우는게 나을듯 ㄴ-->
-        </div>
+        <!-- 굳이 결과 화면을 따로 만들지 않고 채팅 화면에서 채팅 컨테이너를 숨기고 결과컨테이너를 띄우는게 나을듯 ㄴ-->
+      </div>
     </main>
     <script>
-        function getUrlParameter(name) {
-            const urlParams = new URLSearchParams(window.location.search);
-            return urlParams.get(name);
-        }
+      function getUrlParameter(name) {
+        const urlParams = new URLSearchParams(window.location.search);
+        return urlParams.get(name);
+      }
 
-        const userName = decodeURIComponent(getUrlParameter('name') || '');
-        const userGender = decodeURIComponent(getUrlParameter('gender') || '');
+      const userName = decodeURIComponent(getUrlParameter("name") || "");
+      const userGender = decodeURIComponent(getUrlParameter("gender") || "");
 
-        const dialogueText = document.getElementById('dialogue-text');
-        const input = document.getElementById('input');
-        const resultContainer = document.getElementById('result-container');
-        const result = document.getElementById('result');
-        const inputText = [];
-        const replayText = [];
-        let counting = 0;
+      const dialogueText = document.getElementById("dialogue-text");
+      const input = document.getElementById("input");
+      const resultContainer = document.getElementById("result-container");
+      const result = document.getElementById("result");
+      const inputText = [];
+      const replayText = [];
+      let counting = 0;
 
-        document.addEventListener('DOMContentLoaded', () => {
-            if (userName !== '' && userGender !== '') {
-                dialogueText.textContent = `${userName}님, 반갑습니다! 무엇이든 물어보세요.`;
-                document.getElementById("sendBtn").addEventListener('click', sendMessage);
-                
-                // 엔터 키로도 전송 가능하도록 이벤트 리스너 추가
-                input.addEventListener('keypress', function(e) {
-                    if (e.key === 'Enter') {
-                        sendMessage();
-                    }
-                });
-            } else {
-                window.location.href = '/';
+      document.addEventListener("DOMContentLoaded", () => {
+        if (userName !== "" && userGender !== "") {
+          var r_userName;
+          if (userName.search(/\(/) > -1) {
+            const i = userName.indexOf("(");
+            r_userName = userName.substr(0, i);
+          }
+          dialogueText.textContent = `${r_userName}, 안녕?`;
+          document
+            .getElementById("sendBtn")
+            .addEventListener("click", sendMessage);
+
+          // 엔터 키로도 전송 가능하도록 이벤트 리스너 추가
+          input.addEventListener("keypress", function (e) {
+            if (e.key === "Enter") {
+              sendMessage();
             }
-        });
-
-        async function sendMessage() {
-            const message = input.value.trim();
-            if (!message) return;
-
-            input.value = '';
-            
-            inputText.push(message);
-            dialogueText.textContent = '대답을 생각 중입니다...';
-            
-            try {
-                const response = await fetch('/api/chat', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        message: message,
-                        user_name: userName,
-                        counting: counting
-                    })
-                });
-                
-                if (!response.ok) {
-                    throw new Error('서버 응답 오류');
-                }
-                
-                const data = await response.json();
-                
-                replayText.push(data.response);
-                dialogueText.textContent = data.response;
-                
-                counting++;
-                
-                if(counting == 6) {
-                    resultContainer.classList.remove('hidden');
-                    document.getElementById("dialogue-container").classList.add('hidden');
-                    document.getElementById("Character").classList.add('hidden');
-                    //document.getElementById("inputtextlist").textContent = inputText.join('\n');
-                    //document.getElementById("replytextlist").textContent = replayText.join('\n');
-                    document.getElementById("result").textContent = data.response;
-                }
-                
-            } catch (error) {
-                console.error('Error:', error);
-                dialogueText.textContent = '오류가 발생했습니다. 다시 시도해주세요.';
-            }
+          });
+        } else {
+          window.location.href = "/";
         }
+      });
 
+      async function sendMessage() {
+        const message = input.value.trim();
+        if (!message) return;
 
+        input.value = "";
+
+        inputText.push(message);
+        dialogueText.textContent = "대답을 생각 중입니다...";
+
+        try {
+          const response = await fetch("/api/chat", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              message: message,
+              user_name: userName,
+              counting: counting,
+            }),
+          });
+
+          if (!response.ok) {
+            throw new Error("서버 응답 오류");
+          }
+
+          const data = await response.json();
+
+          replayText.push(data.response);
+          dialogueText.textContent = data.response;
+
+          counting++;
+
+          if (counting == 10) {
+            resultContainer.classList.remove("hidden");
+            document
+              .getElementById("dialogue-container")
+              .classList.add("hidden");
+            document.getElementById("Character").classList.add("hidden");
+            //document.getElementById("inputtextlist").textContent = inputText.join('\n');
+            //document.getElementById("replytextlist").textContent = replayText.join('\n');
+            document.getElementById("result").textContent = data.response;
+          }
+        } catch (error) {
+          console.error("Error:", error);
+          dialogueText.textContent = "오류가 발생했습니다. 다시 시도해주세요.";
+        }
+      }
     </script>
-</body>
+  </body>
 </html>
-

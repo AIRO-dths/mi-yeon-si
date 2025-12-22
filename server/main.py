@@ -9,11 +9,13 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, Session, relationship
 import os,uvicorn,random,string,base64
 from server.evaluator import score_sentences
+from server.chat import ChatBot
 
 DATABASE_URL = "sqlite:///./airo.db" 
 engine = create_engine(DATABASE_URL, connect_args={"check_same_thread": False})
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
+BOT = ChatBot()
 
 
 class User(Base):
@@ -76,7 +78,7 @@ class ChatMessage(BaseModel):
 # --- API 엔드포인트 ---
 @app.post("/api/chat")
 async def chat_message(chat_msg: ChatMessage, db: Session = Depends(get_db)):
-    random_response = ''.join(random.choices(string.ascii_letters + string.digits, k=5))
+    # random_response = ''.join(random.choices(string.ascii_letters + string.digits, k=5))
     
     # 사용자 정보 조회
     user = db.query(User).filter(User.name == chat_msg.user_name).first()
@@ -84,10 +86,11 @@ async def chat_message(chat_msg: ChatMessage, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="User not found")
 
     # 최종 응답 결정
-    if chat_msg.counting >= 5:
-        response_text = "끝"
+    if chat_msg.counting >= 10:
+        response_text = "테스트가 종료되었습니다."
     else:
-        response_text = f"임시 대화 {random_response}"
+        # response_text = f"임시 대화 {random_response}"
+        response_text = BOT.get_response(chat_msg.message)
 
     # 대화 내용 저장
     chat_record = Chat(user_message=chat_msg.message, bot_response=response_text, owner=user)
@@ -127,6 +130,9 @@ async def upload_photo(
         db.add(db_user)
         db.commit()
         db.refresh(db_user)
+
+        #모델에 유저 데이터(성별, 이름) 전송
+        BOT.bot_set(name,gender)
         
         # [수정된 부분] 최종 이름을 반환
         return {
