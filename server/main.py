@@ -8,8 +8,10 @@ from sqlalchemy import create_engine, Column, Integer, String, ForeignKey, Text
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, Session, relationship
 import os,uvicorn,random,string,base64
-from server.evaluator import score_sentences
+from server.evaluator import score_sentences, load_evaluator
 from server.chat import ChatBot
+from contextlib import asynccontextmanager
+
 
 DATABASE_URL = "sqlite:///./airo.db" 
 engine = create_engine(DATABASE_URL, connect_args={"check_same_thread": False})
@@ -221,6 +223,12 @@ def get_user_id(user_id: int, db: Session = Depends(get_db)):
     return {
         "face": user.photo_result
     }
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    load_evaluator()
+
 
 
 
