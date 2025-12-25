@@ -1,17 +1,38 @@
-# Web
+# -------------------------
+# Web / Server
+# -------------------------
 fastapi>=0.110,<1.0
 uvicorn[standard]>=0.27,<1.0
 jinja2>=3.1,<4.0
 python-multipart>=0.0.9
 
-# DB
+# -------------------------
+# Database (SQLAlchemy + SQLite)
+# -------------------------
 sqlalchemy>=1.4,<2.1
 
+# -------------------------
 # Validation
+# -------------------------
 pydantic>=2.0,<3.0
 
-# ML
+# -------------------------
+# LLM API (Claude)
+# -------------------------
+anthropic>=0.30,<1.0
+
+# -------------------------
+# Machine Learning
+# -------------------------
 tensorflow>=2.19,<2.20
 keras>=3.3,<4.0
-pandas>=1.5,<2.2
 numpy>=1.26,<2.1
+
+# -------------------------
+# Optional but recommended (TensorFlow 내부 의존)
+# -------------------------
+h5py>=3.10,<4.0
+protobuf>=4.25,<5.0
+
+# render
+gunicorn==22.0.0
