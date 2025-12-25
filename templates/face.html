@@ -1,169 +1,211 @@
 <!DOCTYPE html>
 <html lang="ko">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>AIRO</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;500;700&display=swap" rel="stylesheet">
+    <!--모델-->
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.16.0/dist/tf.min.js"></script>
+    <!--모델-->
+    <script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@0.8/dist/teachablemachine-image.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
     <style>
-        body {
-            font-family: 'M PLUS Rounded 1c', sans-serif;
-            background: linear-gradient(135deg, #ffdde1, #ee9ca7);
-            overflow: hidden;
-            -webkit-user-select: none;
-            -moz-user-select: none;
-            -ms-user-select: none;
-            user-select: none;
-        }
-        
-        /* 드래그 방지 */
-        img {
-            -webkit-user-drag: none;
-            -khtml-user-drag: none;
-            -moz-user-drag: none;
-            -o-user-drag: none;
-        }
-        
-        /* 선택 방지 */
-        * {
-            -webkit-touch-callout: none;
-            -webkit-user-select: none;
-            -khtml-user-select: none;
-            -moz-user-select: none;
-            -ms-user-select: none;
-            user-select: none;
-        }
-        video{
-            transform: rotateY(180deg);
-            -webkit-transform:rotateY(180deg); /* Safari and Chrome */
-            -moz-transform:rotateY(180deg); /* Firefox */
-        }
-        
+      body {
+        font-family: "M PLUS Rounded 1c", sans-serif;
+        background: linear-gradient(135deg, #ffdde1, #ee9ca7);
+        overflow: hidden;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+      }
+
+      /* 드래그 방지 */
+      img {
+        -webkit-user-drag: none;
+        -khtml-user-drag: none;
+        -moz-user-drag: none;
+        -o-user-drag: none;
+      }
+
+      /* 선택 방지 */
+      * {
+        -webkit-touch-callout: none;
+        -webkit-user-select: none;
+        -khtml-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+      }
+      video {
+        transform: rotateY(180deg);
+        -webkit-transform: rotateY(180deg); /* Safari and Chrome */
+        -moz-transform: rotateY(180deg); /* Firefox */
+      }
     </style>
-</head>
-<body>
-    <!-- 어ㅓㄹ굴 -->
-    <main id="face-container" class="fixed inset-0  flex items-center justify-center z-50 transition-opacity duration-300">
-        <div class="bg-white rounded-3xl shadow-2xl p-8 w-full max-w-md transform transition-all duration-300 scale-95" id="modal-content">
-            <h2 class="text-2xl font-bold mb-2 text-gray-800 text-center">AIRO</h2>
-            
-            <div style="text-align: center;">
-                <label id="Text" class="block text-sm font-medium text-gray-600 mb-2"></label>
-                <p><video id="cameraview" class="rounded-xl" width="720" height="480"></video></p>
-                <button id="shotBtn" class="w-full bg-yellow-400 text-white font-normal py-3 px-4 rounded-xl hover:bg-yellow-350 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-400 transition-transform duration-200 hover:scale-105 mt-8 ">
-                사진 촬영
-                </button>
-            </div>
+  </head>
+  <body>
+    <!-- 얼굴 -->
+    <main
+      id="face-container"
+      class="fixed inset-0 flex items-center justify-center z-50 transition-opacity duration-300"
+    >
+      <div
+        class="bg-white rounded-3xl shadow-2xl p-8 w-full max-w-md transform transition-all duration-300 scale-95"
+        id="modal-content"
+      >
+        <h2 class="text-2xl font-bold mb-2 text-gray-800 text-center">AIRO</h2>
+
+        <div style="text-align: center">
+          <label
+            id="Text"
+            class="block text-sm font-medium text-gray-600 mb-2"
+          ></label>
+          <p>
+            <video
+              id="cameraview"
+              class="rounded-xl"
+              width="720"
+              height="480"
+            ></video>
+          </p>
+          <button
+            id="shotBtn"
+            class="w-full bg-yellow-400 text-white font-normal py-3 px-4 rounded-xl hover:bg-yellow-350 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-400 transition-transform duration-200 hover:scale-105 mt-8"
+          >
+            사진 촬영
+          </button>
         </div>
+      </div>
     </main>
-    
+
     <script>
+      function getUrlParameter(name) {
+        const urlParams = new URLSearchParams(window.location.search);
+        return urlParams.get(name);
+      }
 
-        function getUrlParameter(name) {
-            const urlParams = new URLSearchParams(window.location.search);
-            return urlParams.get(name);
-        }
+      const userName = decodeURIComponent(getUrlParameter("name") || "");
+      const userGender = decodeURIComponent(getUrlParameter("gender") || "");
 
-        const userName = decodeURIComponent(getUrlParameter('name') || '');
-        const userGender = decodeURIComponent(getUrlParameter('gender') || '');
-
-        document.addEventListener('DOMContentLoaded', () => {
-            if (userName !== '' && userGender !== '') {
-                open();
-                const Text = document.getElementById('Text');
-                if (Text) {
-                    Text.textContent = `${userName}님 사진을 촬영해주세요.`;
-                }
-            }else{
-                window.location.href = '/';
-            }
-        });
-
-        // camera
-        var streamVideo
-
-        if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){
-            alert("Media Device not supported")
+      document.addEventListener("DOMContentLoaded", () => {
+        if (userName !== "" && userGender !== "") {
+          open();
+          const Text = document.getElementById("Text");
+          if (Text) {
+            Text.textContent = `${userName}님 사진을 촬영해주세요.`;
+          }
         } else {
-            document.getElementById("shotBtn").addEventListener('click',shot)
+          window.location.href = "/";
         }
+      });
 
-        function open() {
-            close()
-            navigator.mediaDevices.getUserMedia({video:true}).then(stream => {
-                streamVideo = stream
+      // camera
+      var streamVideo;
 
-                var cameraView = document.getElementById("cameraview");
-                cameraView.srcObject = stream;
-                cameraView.play()
-            })
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        alert("Media Device not supported");
+      } else {
+        document.getElementById("shotBtn").addEventListener("click", shot);
+      }
+
+      function open() {
+        close();
+        navigator.mediaDevices.getUserMedia({ video: true }).then((stream) => {
+          streamVideo = stream;
+
+          var cameraView = document.getElementById("cameraview");
+          cameraView.srcObject = stream;
+          cameraView.play();
+        });
+      }
+
+      function close() {
+        if (streamVideo) {
+          var track = streamVideo.getTracks();
+          track[0].stop();
+          streamVideo = null;
         }
+      }
 
-        function close() {
-            if (streamVideo) {
-                var track = streamVideo.getTracks()
-                track[0].stop()
-                streamVideo = null
-            }
+      async function shot() {
+        const cameraView = document.getElementById("cameraview");
+        const canvas = document.createElement("canvas");
+        const shotBtn = document.getElementById("shotBtn");
+        const originalBtnText = shotBtn.textContent;
+
+        // 버튼 비활성화 및 로딩 표시
+        shotBtn.disabled = true;
+        shotBtn.textContent = "사진 처리 중...";
+        shotBtn.classList.add("opacity-50");
+
+        try {
+          // 캔버스에 현재 비디오 프레임 그리기
+          canvas.width = cameraView.videoWidth;
+          canvas.height = cameraView.videoHeight;
+          const context = canvas.getContext("2d");
+          context.drawImage(cameraView, 0, 0, canvas.width, canvas.height);
+
+          // 이미지를 base64로 변환
+          const imageData = canvas.toDataURL("image/png");
+
+          //이미지 분석
+          /*바로 분석*/
+          const MODEL_URL =
+            "https://teachablemachine.withgoogle.com/models/1gyPAQ_yj4/";
+          model = await tmImage.load(
+            MODEL_URL + "model.json",
+            MODEL_URL + "metadata.json"
+          );
+          const lastPreds = await model.predict(cameraView);
+          const photo_result = lastPreds.reduce((max, cur) =>
+            cur.probability > max.probability ? cur : max
+          ).className;
+
+          // 서버로 이미지 전송
+          const formData = new FormData();
+          formData.append("name", userName);
+          formData.append("gender", userGender);
+          formData.append("photo", imageData);
+          formData.append("photo_result", photo_result); //분석 결과
+
+          const response = await fetch("/api/upload_photo", {
+            method: "POST",
+            body: formData,
+          });
+
+          const result = await response.json();
+
+          if (result.status === "success") {
+            const finalUserName = result.final_name;
+            window.location.href = `/chat?name=${encodeURIComponent(
+              finalUserName
+            )}&gender=${encodeURIComponent(userGender)}`;
+          } else {
+            alert(
+              "사진 업로드에 실패했습니다: " +
+                (result.message || "알 수 없는 오류")
+            );
+            shotBtn.disabled = false;
+            shotBtn.textContent = originalBtnText;
+            shotBtn.classList.remove("opacity-50");
+          }
+        } catch (error) {
+          console.error("Error:", error);
+          alert("오류가 발생했습니다. 다시 시도해주세요.");
+          shotBtn.disabled = false;
+          shotBtn.textContent = originalBtnText;
+          shotBtn.classList.remove("opacity-50");
+        } finally {
+          close();
         }
-
-        async function shot() {
-            const cameraView = document.getElementById("cameraview");
-            const canvas = document.createElement("canvas");
-            const shotBtn = document.getElementById("shotBtn");
-            const originalBtnText = shotBtn.textContent;
-
-            // 버튼 비활성화 및 로딩 표시
-            shotBtn.disabled = true;
-            shotBtn.textContent = "사진 처리 중...";
-            shotBtn.classList.add("opacity-50");
-
-            try {
-                // 캔버스에 현재 비디오 프레임 그리기
-                canvas.width = cameraView.videoWidth;
-                canvas.height = cameraView.videoHeight;
-                const context = canvas.getContext("2d");
-                context.drawImage(cameraView, 0, 0, canvas.width, canvas.height);
-
-                // 이미지를 base64로 변환
-                const imageData = canvas.toDataURL("image/png");
-
-                // 서버로 이미지 전송
-                const formData = new FormData();
-                formData.append('name', userName);
-                formData.append('gender', userGender);
-                formData.append('photo', imageData);
-
-                const response = await fetch('/api/upload_photo', {
-                    method: 'POST',
-                    body: formData
-                });
-
-                const result = await response.json();
-                
-                if (result.status === 'success') {
-                    const finalUserName = result.final_name;
-                    window.location.href = `/chat?name=${encodeURIComponent(finalUserName)}&gender=${encodeURIComponent(userGender)}`;
-                } else {
-                    alert('사진 업로드에 실패했습니다: ' + (result.message || '알 수 없는 오류'));
-                    shotBtn.disabled = false;
-                    shotBtn.textContent = originalBtnText;
-                    shotBtn.classList.remove("opacity-50");
-                }
-            } catch (error) {
-                console.error('Error:', error);
-                alert('오류가 발생했습니다. 다시 시도해주세요.');
-                shotBtn.disabled = false;
-                shotBtn.textContent = originalBtnText;
-                shotBtn.classList.remove("opacity-50");
-            } finally {
-                close();
-            }
-        }
-
+      }
     </script>
-</body>
+  </body>
 </html>

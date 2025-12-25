@@ -75,7 +75,7 @@
             id="speaker-name"
             class="text-xl font-bold text-yellow-400 text-left"
           >
-            [name]
+            [지우]
           </p>
 
           <div
@@ -119,6 +119,14 @@
           </h2>
 
           <p id="result" class="text-center w-full text-lg md:text-xl"></p>
+          <p id="facetype" class="text-center w-full text-lg md:text-xl"></p>
+          <p id="talktype" class="text-center w-full text-lg md:text-xl"></p>
+          <a
+            style="display: inline-block"
+            href="/"
+            class="w-full bg-yellow-400 text-center text-white font-normal py-3 px-4 rounded-xl hover:bg-yellow-450 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-400 transition-transform duration-200 hover:scale-105 mt-8 !mt-10"
+            >메인으로 돌아가기</a
+          >
           <!--<p id="inputtextlist" class="text-center w-full text-lg md:text-xl">보낸 내용</p>-->
           <!--<p id="dasf" class="text-center w-full text-lg md:text-xl">받은 내용</p>-->
           <!--<p id="replytextlist" class="text-center w-full text-lg md:text-xl">받은 내용</p>-->
@@ -147,9 +155,12 @@
       document.addEventListener("DOMContentLoaded", () => {
         if (userName !== "" && userGender !== "") {
           var r_userName;
+
           if (userName.search(/\(/) > -1) {
             const i = userName.indexOf("(");
             r_userName = userName.substr(0, i);
+          } else {
+            r_userName = userName;
           }
           dialogueText.textContent = `${r_userName}, 안녕?`;
           document
@@ -200,7 +211,7 @@
 
           counting++;
 
-          if (counting == 10) {
+          if (counting >= 6) {
             resultContainer.classList.remove("hidden");
             document
               .getElementById("dialogue-container")
@@ -209,11 +220,60 @@
             //document.getElementById("inputtextlist").textContent = inputText.join('\n');
             //document.getElementById("replytextlist").textContent = replayText.join('\n');
             document.getElementById("result").textContent = data.response;
+            getUserType().then((result) => {
+              document.getElementById(
+                "talktype"
+              ).textContent = `당신은 ${result.talk}입니다.`;
+              document.getElementById(
+                "facetype"
+              ).textContent = `당신은 ${result.face}상입니다.`;
+            });
           }
         } catch (error) {
           console.error("Error:", error);
           dialogueText.textContent = "오류가 발생했습니다. 다시 시도해주세요.";
         }
+      }
+
+      //결과
+      //   점수 추가
+      async function getUserType() {
+        var talktype;
+        var face;
+        const chat = await fetch("/api/user/lastchat").then((res) =>
+          res.json()
+        );
+        const userId = chat.id;
+        console.log(userId);
+        await fetch(`/api/user/${userId}/score`)
+          .then((res) => res.json())
+          .then((score) => {
+            const [maxKey, maxValue] = Object.entries(score).reduce((a, b) =>
+              a[1] > b[1] ? a : b
+            );
+            const result_text = {
+              "friend_user": "친화력이 높은 타입",
+              "attract_user": "매력적인 타입",
+              "fun_user": "재미있는 타입",
+              "blri_user": "공감을 잘 하는 타입",
+            };
+            talktype = result_text[maxKey];
+          })
+          .catch(() => {
+            talktype = "";
+          });
+        await fetch(`/api/user/${userId}/face`)
+          .then((res) => res.json())
+          .then((result) => {
+            face = result.face;
+          })
+          .catch(() => {
+            face = "";
+          });
+        return {
+          "talk": talktype,
+          "face": face,
+        };
       }
     </script>
   </body>

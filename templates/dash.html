@@ -93,6 +93,7 @@
             } else {
               men.forEach((user) => {
                 menListContainer.appendChild(createUserCard(user));
+                console.log(user);
               });
             }
 
@@ -150,6 +151,9 @@
                     <h2 class="text-lg font-bold text-gray-800">${
                       user.name
                     }</h2>
+                    <p class="text-gray-700 font-bold text-base">${
+                      user.face_type
+                    }상</p>
                     <p class="text-gray-500 text-sm">${user.gender}</p>
                     <div id="score-${
                       user.id
@@ -195,10 +199,10 @@
           .then((score) => {
             const box = document.getElementById(`score-${userId}`);
             box.innerHTML = `
-        <p>Friend : <b>${score.friend_user}</b></p>
-        <p>Attract: <b>${score.attract_user}</b></p>
-        <p>Fun    : <b>${score.fun_user}</b></p>
-        <p>BLRI   : <b>${score.blri_user}</b></p>
+        <p>친근함 : <b>${score.friend_user}</b></p>
+        <p>매력  : <b>${score.attract_user}</b></p>
+        <p>재미  : <b>${score.fun_user}</b></p>
+        <p>공감  : <b>${score.blri_user}</b></p>
       `;
           })
           .catch(() => {
