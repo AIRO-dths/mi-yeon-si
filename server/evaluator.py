@@ -44,6 +44,11 @@ MODEL_PATH = BASE_DIR / "static" / "model" / "model_4score.keras"
 TOKENIZER_PATH = BASE_DIR / "static" / "model" / "tokenizer.pkl"
 MAX_LEN = 197
 
+FRIEND_AVR = 3.3679
+ATTRACT_AVR = 3.2738
+FUN_AVR = 3.2076
+BLRI_AVR = 51.5315
+
 
 # =================================================
 # Lazy-loaded globals
@@ -105,8 +110,8 @@ def score_sentences(sentences: list[str]) -> dict:
     pred = _model.predict(pad, verbose=0)[0]
 
     return {
-        "friend_user": float(pred[0]),
-        "attract_user": float(pred[1]),
-        "fun_user": float(pred[2]),
-        "blri_user": float(pred[3]),
+        "friend_user": float(pred[0]/FRIEND_AVR),
+        "attract_user": float(pred[1]/ATTRACT_AVR),
+        "fun_user": float(pred[2]/FUN_AVR),
+        "blri_user": float(pred[3]/BLRI_AVR),
     }
